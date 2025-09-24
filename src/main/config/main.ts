@@ -1,37 +1,56 @@
-import { Simulador } from "../../simulator";
-import { Algoritmo } from "../../algorithm/types/algorithm.types";
-import promptSync from "prompt-sync";
+import { Simulador } from '../../simulator';
+import { Algoritmo } from '../../algorithm/types/algorithm.types';
+import { prompt } from '../../prompt/prompt.prompt';
 
-const prompt = promptSync();
-
-function main() {
-  console.log("🚀 Simulador de Alocação de Memória");
-
-  const algoritmosDisponiveis: Algoritmo[] = ["firstFit", "bestFit", "worstFit", "nextFit"];
-
-  console.log("\nAlgoritmos disponíveis:");
-  algoritmosDisponiveis.forEach((alg, i) => {
-    console.log(`${i + 1}. ${alg}`);
-  });
-
-  const escolha = parseInt(prompt("\nEscolha um algoritmo (1-4): "));
-  const algoritmoSelecionado = algoritmosDisponiveis[escolha - 1];
-
-  if (!algoritmoSelecionado) {
-    console.log("❌ Algoritmo inválido. Encerrando.");
-    return;
-  }
-
-  const memoria = parseInt(prompt("Tamanho da memória (ex: 1000): "));
-  const numSimulacoes = parseInt(prompt("Número de simulações (ex: 100): "));
-  const processosPorSimulacao = parseInt(prompt("Número de processos por simulação (ex: 100): "));
-
-  console.log(`\n🧠 Executando ${numSimulacoes} simulações com o algoritmo "${algoritmoSelecionado}"...\n`);
-
-  const simulador = new Simulador(memoria);
-  simulador.rodarSimulacoes(algoritmoSelecionado, numSimulacoes, processosPorSimulacao);
-
-  console.log("\n✅ Simulação concluída!");
+function mostrarMenu(): void {
+  console.log("\n****************************************");
+  console.log("*      MEMORY ALLOCATION SIMULATOR     *");
+  console.log("****************************************");
+  console.log("1. First Fit");
+  console.log("2. Best Fit"); 
+  console.log("3. Worst Fit");
+  console.log("4. Next Fit");
+  console.log("5. All algorithms");
+  console.log("0. Exit");
+  console.log("****************************************");
 }
 
-main();
+async function main(): Promise<void> {
+  const simulador = new Simulador();
+
+  while (true) {
+    mostrarMenu();
+    
+    const opcao = (await prompt("> ")).trim();
+    
+    if (opcao === '0') break;
+    
+    if (!['1','2','3','4','5'].includes(opcao)) {
+      console.log("Opcao invalida!");
+      continue;
+    }
+
+    // Pega configs
+    const memoria = parseInt(await prompt("Memoria [1000]: ") || "1000");
+    const repeticoes = parseInt(await prompt("Repeticoes [100]: ") || "100");
+    const tempo = parseInt(await prompt("Tempo [100]: ") || "100");
+
+    const algoritmos: Algoritmo[] = ['firstFit', 'bestFit', 'worstFit', 'nextFit'];
+
+    if (opcao === '5') {
+      for (const alg of algoritmos) {
+        console.log(`Executando: ${alg}`);
+        await simulador.executar(alg, repeticoes, tempo);
+      }
+    } else {
+      const alg = algoritmos[parseInt(opcao) - 1];
+      console.log(`Executando: ${alg}`);
+      await simulador.executar(alg, repeticoes, tempo);
+    }
+
+    const continuar = (await prompt("Continuar? (s/n): ")).toLowerCase();
+    if (continuar !== 's') break;
+  }
+}
+
+main().catch(console.error);

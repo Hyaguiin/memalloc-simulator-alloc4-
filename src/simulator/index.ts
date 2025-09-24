@@ -1,10 +1,10 @@
 import { Memoria } from '../memory/memoria.memory';
 import { GeradorDeProcessos } from '../main/process/ProcessoGerador.process';
 import { Processo } from '../main/process/Processo.process';
-import { BestFit } from '../Algorithm/bestFit.algorithm';
-import { FirstFit } from '../Algorithm/firstFit.algorithm';
-import { NextFit } from '../Algorithm/nextFit.algorithm';
-import { WorstFit } from '../Algorithm/worstFit.argorithm';
+import { BestFit } from '../algorithm/bestFit.algorithm';
+import { FirstFit } from '../algorithm/firstFit.algorithm';
+import { NextFit } from '../algorithm/nextFit.algorithm';
+import { WorstFit } from '../algorithm/worstFit.argorithm';
 import { Algoritmo } from '../algorithm/types/algorithm.types';
 
 const AlgoritmosDeAlocacao = {
@@ -101,5 +101,16 @@ export class Simulador {
     console.log(`- Ocupação média da memória: ${(somaOcupacao / repeticoes).toFixed(2)}%`);
     console.log(`- Taxa de descarte: ${(somaDescarte / repeticoes).toFixed(2)}%`);
     console.log('--------------------------------------------------');
+  }
+
+  public executar(algoritmo: Algoritmo, repeticoes: number = 100, tempoTotal: number = 100): void {
+    console.log("\n🧠 INICIANDO SIMULAÇÃO...");
+    console.log(`Usando o algoritmo de alocação: ${algoritmo}`);
+
+    // Chama a função que roda as simulações do algoritmo
+    this.rodarSimulacoes(algoritmo, repeticoes, tempoTotal);
+
+    console.log("=====================================");
+    console.log("✅ Simulação finalizada!");
   }
 }

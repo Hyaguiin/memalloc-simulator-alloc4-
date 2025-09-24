@@ -1,4 +1,3 @@
-// MÉTODO MAIS CRÚ POSSÍVEL
 export function prompt(pergunta: string): Promise<string> {
   process.stdout.write(pergunta);
   return new Promise((resolve) => {
@@ -6,4 +5,6 @@ export function prompt(pergunta: string): Promise<string> {
       resolve(data.toString().trim());
     });
   });
+  // return promptSync({ sigint: true })(pergunta); 
+  //Todos os outros syncs prompt tavam em loop 
 }

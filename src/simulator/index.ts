@@ -1,5 +1,3 @@
-// simulador.ts
-
 import { Memoria } from '../memory/memoria.memory';
 import { GeradorDeProcessos } from '../main/process/ProcessoGerador.process';
 import { Processo } from '../main/process/Processo.process';
@@ -7,6 +5,8 @@ import { BestFit } from '../Algorithm/bestFit.algorithm';
 import { FirstFit } from '../Algorithm/firstFit.algorithm';
 import { NextFit } from '../Algorithm/nextFit.algorithm';
 import { WorstFit } from '../Algorithm/worstFit.argorithm';
+import { Algoritmo } from '../algorithm/types/algorithm.types';
+
 const AlgoritmosDeAlocacao = {
   firstFit: FirstFit.firstFit,
   bestFit: BestFit.bestFit,
@@ -14,10 +14,7 @@ const AlgoritmosDeAlocacao = {
   worstFit: WorstFit.worstFit,
 };
 
-import { Algoritmo } from '../algorithm/types/algorithm.types';
-
-
-class Simulador {
+export class Simulador {
   private readonly tamanhoMemoria: number;
 
   constructor(tamanhoMemoria: number = 1000) {
@@ -106,5 +103,3 @@ class Simulador {
     console.log('--------------------------------------------------');
   }
 }
-
-export { Simulador };

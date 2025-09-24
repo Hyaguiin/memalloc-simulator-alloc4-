@@ -4,19 +4,25 @@
   "description": "",
   "main": "main.ts",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec ts-node src/main/config/main.ts",
+    "dev": "nodemon --watch src --ext ts --exec \"tsx src/main/config/main.ts\"",
     "build": "tsc",
     "start": "node dist/src/config/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
+  "type": "module",
   "license": "ISC",
   "packageManager": "pnpm@10.17.1",
   "devDependencies": {
     "@types/node": "^24.5.2",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2"
+  },
+  "ts-node": {
+    "esm": true,
+    "swc": false
   }
 }

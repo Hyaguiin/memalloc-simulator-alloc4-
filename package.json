@@ -24,5 +24,8 @@
   "ts-node": {
     "esm": true,
     "swc": false
+  },
+  "dependencies": {
+    "prompt-sync": "^4.2.0"
   }
 }

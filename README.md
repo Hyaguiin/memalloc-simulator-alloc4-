@@ -29,24 +29,23 @@ Este projeto simula o comportamento de diferentes algoritmos de alocação de me
 
 ## ✨ Características
 
-- ✅ **4 Algoritmos de Alocação** implementados: *First Fit*, *Best Fit*, *Worst Fit* e *Next Fit*.
+- ✅ **4 Algoritmos de Alocação** implementados: _First Fit_, _Best Fit_, _Worst Fit_ e _Next Fit_.
 - ✅ **Geração aleatória de processos** com tamanhos variados.
 - ✅ **Simulação de ciclo de vida completo** de alocação e desalocação de processos.
 - ✅ Múltiplas execuções para **resultados estatisticamente significativos**.
 - ✅ **Métricas detalhadas de desempenho** para comparar os algoritmos.
-- ✅ Arquitetura **modular e extensível** para facilitar manutenções e atualizações.
 - ✅ **100% TypeScript** com tipagem forte para maior confiabilidade.
 
 ---
 
 ## 🧩 Algoritmos Implementados
 
-| Algoritmo   | Descrição                                            | Complexidade |
-|-------------|------------------------------------------------------|--------------|
-| **First Fit**  | Aloca no primeiro bloco livre que seja suficiente.   | O(n)         |
-| **Best Fit**   | Aloca no menor bloco livre que seja suficiente.      | O(n)         |
-| **Worst Fit**  | Aloca no maior bloco livre disponível.              | O(n)         |
-| **Next Fit**   | Similar ao First Fit, mas começa a busca na última alocação. | O(n)    |
+| Algoritmo     | Descrição                                                    | Complexidade |
+| ------------- | ------------------------------------------------------------ | ------------ |
+| **First Fit** | Aloca no primeiro bloco livre que seja suficiente.           | O(n)         |
+| **Best Fit**  | Aloca no menor bloco livre que seja suficiente.              | O(n)         |
+| **Worst Fit** | Aloca no maior bloco livre disponível.                       | O(n)         |
+| **Next Fit**  | Similar ao First Fit, mas começa a busca na última alocação. | O(n)         |
 
 ---
 
@@ -72,32 +71,41 @@ src/
     ├── Processo.process.ts        # Classe Processo
     └── ProcessoGerador.process.ts # Gerador de process
 ```
+
 🛠️
-1#- Instalação
+
+### 1- Instalação
+
+Para configurar o projeto em sua máquina local, siga os passos abaixo. É necessário ter o [Node.js](https://nodejs.org/en), o [npm](https://www.npmjs.com/) e o [TypeScript](https://www.typescriptlang.org/) instalados.
 
 Para rodar o projeto em sua máquina, siga as instruções abaixo:
-``` bash 
+
+```bash
 Clone o repositório:
 git clone https://github.com/Hyaguiin/memalloc-simulator-alloc4-.git
 cd memalloc-simulator-alloc4-
 ```
 
-2#- Instale as dependências com pnpm:
+### 2- Build:
 
-Certifique-se de ter o pnpm
- instalado. Se ainda não tiver, pode instalar com o seguinte comando:
- ```bash
- npm install -g pnpm
- ```
- Depois, instale as dependências do projeto:
-  ```bash
- pnpm install
- ```
+Para compilar o código TypeScript para JavaScript, execute o comando de build. Isso irá transpilar os arquivos .ts para .js em um diretório de saída (geralmente dist/).
 
- 3# Compile o projeto:
+```bash
+npm run build
+```
 
-O projeto é desenvolvido em TypeScript, então compile o código com:
- ```bash
- pnpm run dev
- ```
+### 3 Start:
 
+Após a compilação, você pode iniciar o simulador com o comando start. Ele executará o código JavaScript a partir do diretório de build.
+
+```bash
+npm start
+```
+
+## Desenvolvimento
+
+Para executar o projeto em modo de desenvolvimento (que compila e executa o código automaticamente), utilize o comando dev:
+
+```bash
+npm run dev
+```

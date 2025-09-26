@@ -4,6 +4,9 @@
   "description": "Um simulador completo de algoritmos de alocação de memória, desenvolvido em **TypeScript**, que permite comparar o desempenho de diferentes estratégias de alocação de memória em um ambiente controlado.",
   "main": "index.ts",
   "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc",
+    "dev": "node --watch --experimental-strip-types src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

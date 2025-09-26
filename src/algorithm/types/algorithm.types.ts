@@ -1,1 +1,0 @@
-export type Algoritmo = 'firstFit' | 'bestFit' | 'worstFit' | 'nextFit';

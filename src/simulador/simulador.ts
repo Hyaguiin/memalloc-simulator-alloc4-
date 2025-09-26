@@ -4,13 +4,24 @@ import { Processo } from "../processo/processo.ts";
 import { MallocAlgoritmos } from "../algoritmos/algoritmos.ts";
 import type { Algoritmo } from "../types/algoritmo.ts";
 
+/**
+ * Orquestra a simulação de alocação de memória.
+ * Executa simulações para diferentes algoritmos, coleta métricas e exibe os resultados.
+ */
 export class Simulador {
+  /** Tamanho padrão da memória para cada simulação. */
   private readonly tamanhoMemoria: number;
 
   constructor(tamanhoMemoria: number = 1024) {
     this.tamanhoMemoria = tamanhoMemoria;
   }
 
+  /**
+   * Executa uma única rodada da simulação para um determinado algoritmo.
+   * @param algoritmo - O algoritmo a ser testado ('firstFit', 'bestFit', etc.).
+   * @param tempoTotal - O número de "ticks" de tempo que a simulação durará.
+   * @returns Um objeto contendo as métricas da simulação.
+   */
   private rodarSimulacaoIndividual(
     algoritmo: Algoritmo,
     tempoTotal: number
@@ -20,7 +31,8 @@ export class Simulador {
     taxaDescarte: number;
   } {
     const memoria = new Memoria(this.tamanhoMemoria);
-    const processos: Processo[] = [];
+    // Mantém uma lista dos processos atualmente alocados na memória.
+    const processosAlocados: Processo[] = [];
 
     let totalProcessosGerados = 0;
     let somaTamanhoProcessos = 0;
@@ -28,39 +40,48 @@ export class Simulador {
     let totalDescartados = 0;
 
     for (let t = 0; t < tempoTotal; t++) {
-      // Gerar 2 novos processos
-      const novos = GeradorDeProcessos.gerarProcessos(2);
+      // 1. Gerar 2 novos processos a cada "tick".
+      const novosProcessos = GeradorDeProcessos.gerarProcessos(2);
 
-      novos.forEach((processo) => {
+      novosProcessos.forEach((processo) => {
         totalProcessosGerados++;
         somaTamanhoProcessos += processo.tamanho;
 
-        const alocou = MallocAlgoritmos[algoritmo](memoria, processo);
-        if (alocou) {
-          processos.push(processo);
+        // 2. Tentar alocar cada novo processo.
+        const enderecoBase = MallocAlgoritmos[algoritmo](memoria, processo);
+
+        if (enderecoBase !== -1) {
+          // Se alocou, armazena o endereço e adiciona à lista de processos alocados.
+          processo.enderecoBase = enderecoBase;
+          processosAlocados.push(processo);
         } else {
+          // Se não conseguiu alocar, conta como descartado.
           totalDescartados++;
         }
       });
 
-      // Desalocar 1 ou 2 processos aleatórios
-      const quantidadeRemover = Math.min(processos.length, Math.floor(Math.random() * 2) + 1);
+      // 3. Desalocar 1 ou 2 processos aleatórios que estão na memória.
+      const quantidadeRemover = Math.min(processosAlocados.length, Math.floor(Math.random() * 2) + 1);
 
       for (let i = 0; i < quantidadeRemover; i++) {
-        const indice = Math.floor(Math.random() * processos.length);
-        const removido = processos.splice(indice, 1)[0];
+        // Escolhe um processo aleatório da lista de alocados.
+        const indice = Math.floor(Math.random() * processosAlocados.length);
+        const [removido] = processosAlocados.splice(indice, 1);
+
         if (removido) {
-          memoria.liberar(removido.id, removido.tamanho);
+          // Libera o espaço na memória usando o endereço e tamanho corretos.
+          memoria.liberar(removido.enderecoBase, removido.tamanho);
         }
       }
 
-      // Acumula ocupação para cálculo da média
+      // 4. Acumula a ocupação da memória neste "tick" para o cálculo da média.
       totalOcupacaoMemoria += memoria.getOcupacao();
     }
 
-    const mediaTamanhoProcessos = somaTamanhoProcessos / totalProcessosGerados;
+    // Calcula as métricas finais.
+    const mediaTamanhoProcessos = totalProcessosGerados > 0 ? somaTamanhoProcessos / totalProcessosGerados : 0;
     const ocupacaoMedia = totalOcupacaoMemoria / tempoTotal;
-    const taxaDescarte = (totalDescartados / totalProcessosGerados) * 100;
+    const taxaDescarte = totalProcessosGerados > 0 ? (totalDescartados / totalProcessosGerados) * 100 : 0;
 
     return {
       mediaTamanhoProcessos,
@@ -69,7 +90,13 @@ export class Simulador {
     };
   }
 
-  public rodarSimulacoes(algoritmo: Algoritmo, repeticoes: number = 100, tempoTotal: number = 100): void {
+  /**
+   * Executa múltiplas simulações para um algoritmo e calcula a média dos resultados.
+   * @param algoritmo - O algoritmo a ser usado.
+   * @param repeticoes - O número de vezes que a simulação individual deve ser repetida.
+   * @param tempoTotal - A duração de cada simulação individual.
+   */
+  public rodarSimulacoes(algoritmo: Algoritmo, repeticoes: number, tempoTotal: number): void {
     let somaTamanhos = 0;
     let somaOcupacao = 0;
     let somaDescarte = 0;
@@ -81,6 +108,7 @@ export class Simulador {
       somaDescarte += resultado.taxaDescarte;
     }
 
+    // Exibe os resultados médios.
     console.log(`\n📊 Resultados após ${repeticoes} execuções (${algoritmo}):`);
     console.log(`- Tamanho médio dos processos: ${(somaTamanhos / repeticoes).toFixed(2)}`);
     console.log(`- Ocupação média da memória: ${(somaOcupacao / repeticoes).toFixed(2)}%`);
@@ -88,11 +116,17 @@ export class Simulador {
     console.log("--------------------------------------------------");
   }
 
-  public executar(algoritmo: Algoritmo, repeticoes: number = 100, tempoTotal: number = 100): void {
+  /**
+   * Ponto de entrada público para executar a simulação completa para um algoritmo.
+   * @param algoritmo - O algoritmo a ser executado.
+   * @param repeticoes - Quantidade de repetições da simulação.
+   * @param tempoTotal - Duração de cada simulação.
+   */
+  public executar(algoritmo: Algoritmo, repeticoes: number, tempoTotal: number): void {
     console.log("\n🧠 INICIANDO SIMULAÇÃO...");
     console.log(`Usando o algoritmo de alocação: ${algoritmo}`);
+    console.log(`Configurações: Memória=${this.tamanhoMemoria}, Repetições=${repeticoes}, Duração=${tempoTotal}`);
 
-    // Chama a função que roda as simulações do algoritmo
     this.rodarSimulacoes(algoritmo, repeticoes, tempoTotal);
 
     console.log("=====================================");

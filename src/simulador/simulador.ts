@@ -11,9 +11,12 @@ import type { Algoritmo } from "../types/algoritmo.ts";
 export class Simulador {
   /** Tamanho padrão da memória para cada simulação. */
   private readonly tamanhoMemoria: number;
+  /** Instância da memória da simulação*/
+  private memoria: Memoria;
 
-  constructor(tamanhoMemoria: number = 1024) {
+  constructor(tamanhoMemoria: number) {
     this.tamanhoMemoria = tamanhoMemoria;
+    this.memoria = new Memoria(this.tamanhoMemoria);
   }
 
   /**
@@ -30,7 +33,6 @@ export class Simulador {
     ocupacaoMedia: number;
     taxaDescarte: number;
   } {
-    const memoria = new Memoria(this.tamanhoMemoria);
     // Mantém uma lista dos processos atualmente alocados na memória.
     const processosAlocados: Processo[] = [];
 
@@ -48,7 +50,7 @@ export class Simulador {
         somaTamanhoProcessos += processo.tamanho;
 
         // 2. Tentar alocar cada novo processo.
-        const enderecoBase = MallocAlgoritmos[algoritmo](memoria, processo);
+        const enderecoBase = MallocAlgoritmos[algoritmo](this.memoria, processo);
 
         if (enderecoBase !== -1) {
           // Se alocou, armazena o endereço e adiciona à lista de processos alocados.
@@ -70,12 +72,12 @@ export class Simulador {
 
         if (removido) {
           // Libera o espaço na memória usando o endereço e tamanho corretos.
-          memoria.liberar(removido.enderecoBase, removido.tamanho);
+          this.memoria.liberar(removido.enderecoBase, removido.tamanho);
         }
       }
 
       // 4. Acumula a ocupação da memória neste "tick" para o cálculo da média.
-      totalOcupacaoMemoria += memoria.getOcupacao();
+      totalOcupacaoMemoria += this.memoria.getOcupacao();
     }
 
     // Calcula as métricas finais.
